@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
+        new transports.Console(),
         new transports.DailyRotateFile({
           level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
           filename: `./logs/twingo-auth-%DATE%.log`,

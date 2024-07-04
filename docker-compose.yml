@@ -4,6 +4,7 @@ services:
     container_name: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=T2024W73ing0
+      - MYSQL_DATABASE=twingo
     image: postgres:12.2-alpine
     networks:
       - jenkins
@@ -18,8 +19,6 @@ services:
     container_name: twingo-auth
     volumes:
       - logs:/code/logs
-    # ports:
-    #   - "3000:3000"
     links:
       - "mysql:db"
     networks:
