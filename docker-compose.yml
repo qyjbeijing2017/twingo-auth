@@ -5,7 +5,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=T2024W73ing0
       - MYSQL_DATABASE=twingo
-    image: postgres:12.2-alpine
+    image: mysql
     networks:
       - jenkins
     volumes:
