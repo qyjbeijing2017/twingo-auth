@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mysql:
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=T2024W73ing0
+    image: postgres:12.2-alpine
+    networks:
+      - jenkins
+    volumes:
+      - data:/var/lib/mysql
+    restart: on-failure
+
+  twingo-auth:
+    build: .
+    depends_on:
+      - mysql
+    container_name: twingo-auth
+    volumes:
+      - logs:/code/logs
+    # ports:
+    #   - "3000:3000"
+    links:
+      - "mysql:db"
+    networks:
+      - jenkins
+    restart: on-failure
+
+volumes:
+  data:
+  logs:
+networks:
+  jenkins:
+    name: jenkins
+    external: true
