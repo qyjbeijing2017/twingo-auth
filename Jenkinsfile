@@ -7,7 +7,7 @@ pipeline{
         stage("Build"){
             steps{
                 echo "========executing Build========"
-                sh "docker compose up --build nakama -d"
+                sh "docker compose up --build twingo-auth -d"
             }
             post{
                 success{
