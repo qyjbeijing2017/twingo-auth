@@ -18,5 +18,6 @@ ENV NODE_ENV=production
 COPY --from=node-builder /code/package*.json ./
 COPY --from=node-builder /code/node_modules ./node_modules
 COPY --from=node-builder /code/dist ./dist
+COPY --from=node-builder /code/.env* ./
 
 CMD ["node", "dist/main.js"]
