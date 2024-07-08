@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Auth } from './auth.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 } from 'uuid';
+import { CodeGateway } from './code.gateway';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
+    private readonly codeGateway: CodeGateway,
   ) {}
 
   async verifyCode(phone: string): Promise<void> {
@@ -36,6 +38,8 @@ export class AuthService {
     }
     auth.code = Math.floor(Math.random() * 10000).toString();
     auth.updatedAt = new Date();
+    this.codeGateway.codeSent(auth.phone, auth.code);
+    this.logger.log(`Code sent to ${auth.phone}: ${auth.code}`);
     await this.authRepository.save(auth);
   }
 

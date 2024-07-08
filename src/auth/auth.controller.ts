@@ -11,7 +11,6 @@ export class AuthController {
   @Get('verify-code')
   @ApiQuery({ name: 'phone', required: true })
   verifyCode(@Query('phone') phone) {
-    console.log(phone);
     return this.appService.verifyCode(phone);
   }
 
