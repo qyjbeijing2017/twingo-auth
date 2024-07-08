@@ -17,6 +17,8 @@ services:
     depends_on:
       - mysql
     container_name: twingo-auth
+    ports:
+      - "5172:3000"
     volumes:
       - logs:/code/logs
     links:
