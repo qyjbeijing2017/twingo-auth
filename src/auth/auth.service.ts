@@ -10,6 +10,8 @@ import { Auth } from './auth.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CodeGateway } from './code.gateway';
 import { randomString } from 'src/utils/random';
+import { NakamaService } from './nakama.service';
+import { MinIOService } from './minio.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,8 @@ export class AuthService {
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
     private readonly codeGateway: CodeGateway,
+    private readonly nakama: NakamaService,
+    private readonly minio: MinIOService,
   ) {}
 
   async verifyCode(phone: string): Promise<void> {
@@ -67,5 +71,22 @@ export class AuthService {
     auth.code = null;
     await this.authRepository.save(auth);
     return { id: auth.uuid };
+  }
+
+  async avatar(token: string, file: Express.Multer.File) {
+    const session = await this.nakama.session(token);
+    const type = file.filename.split('.').pop();
+    const name = session.user_id + '.' + type;
+    await this.minio.minio.putObject('avatars', name, file.buffer);
+    this.nakama.client.updateAccount(session, {
+      avatar_url: process.env.MINIO_SERVER_URL + '/avatars/' + name,
+    });
+  }
+
+  async profile(token: string, file: Express.Multer.File) {
+    const session = await this.nakama.session(token);
+    const type = file.filename.split('.').pop();
+    const name = session.user_id + '.' + type;
+    await this.minio.minio.putObject('profiles', name, file.buffer);
   }
 }
