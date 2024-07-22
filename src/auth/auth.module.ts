@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from './auth.entity';
 import { CodeGateway } from './code.gateway';
 import { NakamaService } from './nakama.service';
+import { MinIOService } from './minio.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Auth])],
   controllers: [AuthController],
-  providers: [AuthService, CodeGateway, NakamaService],
+  providers: [AuthService, CodeGateway, NakamaService, MinIOService],
 })
 export class AuthModule {}

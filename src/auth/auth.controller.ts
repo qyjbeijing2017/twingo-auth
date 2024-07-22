@@ -9,17 +9,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiHeader,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthorizeDTO } from './dto/authorize.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadDto } from './dto/file-upoload.dto';
 
-const authDesc = `Nakama session token, start with authType, with format:
-device:<deviceId>
-email:{"email": "<email>","password": "<password>"}
-facebook:<facebookToken>
-google:<googleToken>
-phone:<customToken>
-apple:<appleToken>`;
+const authDesc = `Nakama session token, start with "authType:", total type: device, email, facebook, google, phone, apple,  e.g. 'email:{"email":"your_email","password":"your_password"}', 'phone:custom_id', 'device:device_id', 'apple:apple_id'`;
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,12 +39,17 @@ export class AuthController {
   }
 
   @Post('avatar')
+  @UseInterceptors(FileInterceptor('file'))
   @ApiHeader({
     name: 'Authorization',
     required: true,
     description: authDesc,
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'avatar file',
+    type: FileUploadDto,
+  })
   avatar(
     @Headers('Authorization') token: string,
     @UploadedFile() file: Express.Multer.File,
@@ -52,12 +58,17 @@ export class AuthController {
   }
 
   @Post('profile')
+  @UseInterceptors(FileInterceptor('file'))
   @ApiHeader({
     name: 'Authorization',
     required: true,
     description: authDesc,
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'profile file',
+    type: FileUploadDto,
+  })
   profile(
     @Headers('Authorization') token: string,
     @UploadedFile() file: Express.Multer.File,
