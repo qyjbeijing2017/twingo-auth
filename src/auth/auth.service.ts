@@ -24,12 +24,12 @@ export class AuthService {
   async verifyCode(phone: string): Promise<void> {
     let auth = await this.authRepository.findOne({ where: { phone } });
     const now = new Date();
-    if (
-      auth &&
-      now.getTime() - auth.updatedAt.getTime() < this.authExpiryTime * 1000
-    ) {
+
+    const waitTime =
+      this.authExpiryTime - (now.getTime() - auth.updatedAt.getTime()) / 1000;
+    if (auth && waitTime > 0) {
       throw new ForbiddenException(
-        `Code is already sent, please wait ${((now.getTime() - auth.updatedAt.getTime()) / 1000).toFixed(0)} seconds`,
+        `Code is already sent, please wait ${waitTime.toFixed(0)} seconds`,
       );
     }
 
