@@ -8,8 +8,8 @@ import {
 import { Repository } from 'typeorm';
 import { Auth } from './auth.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { v4 } from 'uuid';
 import { CodeGateway } from './code.gateway';
+import { randomString } from 'src/utils/random';
 
 @Injectable()
 export class AuthService {
@@ -28,13 +28,19 @@ export class AuthService {
       auth &&
       now.getTime() - auth.updatedAt.getTime() < this.authExpiryTime * 1000
     ) {
-      throw new ForbiddenException('Code is already sent');
+      throw new ForbiddenException(
+        `Code is already sent, please wait ${((now.getTime() - auth.updatedAt.getTime()) / 1000).toFixed(0)} seconds`,
+      );
     }
 
     if (!auth) {
       auth = new Auth();
       auth.phone = phone;
-      auth.uuid = v4();
+      auth.uuid = phone + `-` + randomString(27);
+    } else {
+      if (!auth.uuid.startsWith(phone)) {
+        auth.uuid = phone + `-` + randomString(27);
+      }
     }
     auth.code = Math.floor(Math.random() * 10000).toString();
     auth.updatedAt = new Date();
