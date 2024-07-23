@@ -87,7 +87,7 @@ export class AuthService {
   async profile(token: string, file: Express.Multer.File) {
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     const session = await this.nakama.session(token);
-    const type = file.filename.split('.').pop();
+    const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
     await this.minio.minio.putObject('profiles', name, file.buffer);
     this.nakama.client.rpc(session, 'rpcUpdateProfile', {
