@@ -75,11 +75,11 @@ export class AuthService {
 
   async avatar(token: string, file: Express.Multer.File) {
     const session = await this.nakama.session(token);
-    const type = file.filename.split('.').pop();
+    const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
     await this.minio.minio.putObject('avatars', name, file.buffer);
     this.nakama.client.updateAccount(session, {
-      avatar_url: process.env.MINIO_SERVER_URL + '/avatars/' + name,
+      avatar_url: this.minio.entryPoint + '/avatars/' + name,
     });
   }
 
@@ -88,5 +88,8 @@ export class AuthService {
     const type = file.filename.split('.').pop();
     const name = session.user_id + '.' + type;
     await this.minio.minio.putObject('profiles', name, file.buffer);
+    this.nakama.client.rpc(session, 'rpcUpdateProfile', {
+      profile_url: this.minio.entryPoint + '/profiles/' + name,
+    });
   }
 }

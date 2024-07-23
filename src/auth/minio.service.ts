@@ -12,4 +12,8 @@ export class MinIOService {
     accessKey: process.env.MINIO_SERVER_ACCESS_KEY ?? 'defaultkey',
     secretKey: process.env.MINIO_SERVER_SECRET_KEY ?? 'defaultsecret',
   });
+
+  get entryPoint() {
+    return `${process.env.MINIO_SERVER_SSL.toLowerCase() === 'true' ? 'https' : 'http'}://${process.env.MINIO_SERVER_HOST}:${process.env.MINIO_SERVER_PORT}`;
+  }
 }

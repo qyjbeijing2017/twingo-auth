@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiHeader,
@@ -20,7 +21,7 @@ import { AuthorizeDTO } from './dto/authorize.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadDto } from './dto/file-upoload.dto';
 
-const authDesc = `Nakama session token, start with "authType:", total type: device, email, facebook, google, phone, apple,  e.g. 'email:{"email":"your_email","password":"your_password"}', 'phone:custom_id', 'device:device_id', 'apple:apple_id'`;
+const authDesc = `Please Leave empty in Swagger UI,Use lock icon on the top-right to authorize, authorize is Nakama session token, e.g. 'Bearer ' + session.token, but in swagger UI you don't need to add 'Bearer '`;
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,18 +39,19 @@ export class AuthController {
     return this.appService.authorize(phone, code);
   }
 
-  @Post('avatar')
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
-  @ApiHeader({
-    name: 'Authorization',
-    required: true,
-    description: authDesc,
-  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'avatar file',
     type: FileUploadDto,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: authDesc,
+    required: false,
+  })
+  @Post('avatar')
   avatar(
     @Headers('Authorization') token: string,
     @UploadedFile() file: Express.Multer.File,
@@ -57,18 +59,19 @@ export class AuthController {
     return this.appService.avatar(token, file);
   }
 
-  @Post('profile')
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
-  @ApiHeader({
-    name: 'Authorization',
-    required: true,
-    description: authDesc,
-  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'profile file',
     type: FileUploadDto,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: authDesc,
+    required: false,
+  })
+  @Post('profile')
   profile(
     @Headers('Authorization') token: string,
     @UploadedFile() file: Express.Multer.File,
