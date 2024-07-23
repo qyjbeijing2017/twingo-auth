@@ -74,7 +74,6 @@ export class AuthService {
   }
 
   async avatar(token: string, file: Express.Multer.File) {
-    this.logger.log(`token: ${token}`);
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     const session = await this.nakama.session(token);
     const type = file.originalname.split('.').pop();
@@ -86,6 +85,7 @@ export class AuthService {
   }
 
   async profile(token: string, file: Express.Multer.File) {
+    if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     const session = await this.nakama.session(token);
     const type = file.filename.split('.').pop();
     const name = session.user_id + '.' + type;
