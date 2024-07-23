@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -75,6 +76,7 @@ export class AuthService {
 
   async avatar(token: string, file: Express.Multer.File) {
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
+    if (!file) throw new BadRequestException('file is required');
     const session = await this.nakama.session(token);
     const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
@@ -86,6 +88,7 @@ export class AuthService {
 
   async profile(token: string, file: Express.Multer.File) {
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
+    if (!file) throw new BadRequestException('file is required');
     const session = await this.nakama.session(token);
     const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
