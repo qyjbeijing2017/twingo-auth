@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -11,9 +10,6 @@ import { Auth } from './auth.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CodeGateway } from './code.gateway';
 import { randomString } from 'src/utils/random';
-import { NakamaService } from './nakama.service';
-import { MinIOService } from './minio.service';
-
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -22,8 +18,6 @@ export class AuthService {
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
     private readonly codeGateway: CodeGateway,
-    private readonly nakama: NakamaService,
-    private readonly minio: MinIOService,
   ) {}
 
   async verifyCode(phone: string): Promise<void> {
@@ -72,29 +66,5 @@ export class AuthService {
     auth.code = null;
     await this.authRepository.save(auth);
     return { id: auth.uuid };
-  }
-
-  async avatar(token: string, file: Express.Multer.File) {
-    if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
-    if (!file) throw new BadRequestException('file is required');
-    const session = await this.nakama.session(token);
-    const type = file.originalname.split('.').pop();
-    const name = session.user_id + '.' + type;
-    await this.minio.minio.putObject('avatars', name, file.buffer);
-    this.nakama.client.updateAccount(session, {
-      avatar_url: this.minio.entryPoint + '/avatars/' + name,
-    });
-  }
-
-  async profile(token: string, file: Express.Multer.File) {
-    if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
-    if (!file) throw new BadRequestException('file is required');
-    const session = await this.nakama.session(token);
-    const type = file.originalname.split('.').pop();
-    const name = session.user_id + '.' + type;
-    await this.minio.minio.putObject('profiles', name, file.buffer);
-    this.nakama.client.rpc(session, 'rpcUpdateProfile', {
-      profile_url: this.minio.entryPoint + '/profiles/' + name,
-    });
   }
 }
