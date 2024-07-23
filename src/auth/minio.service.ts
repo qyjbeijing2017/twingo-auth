@@ -14,6 +14,6 @@ export class MinIOService {
   });
 
   get entryPoint() {
-    return `${process.env.MINIO_SERVER_SSL.toLowerCase() === 'true' ? 'https' : 'http'}://${process.env.MINIO_SERVER_HOST}:${process.env.MINIO_SERVER_PORT}`;
+    return process.env.MINIO_SERVER_ENTRYPORT;
   }
 }
