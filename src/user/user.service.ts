@@ -28,7 +28,7 @@ export class UserService {
     });
   }
 
-  async profile(token: string, file: Express.Multer.File) {
+  async profile(token: string, file: Express.Multer.File, text: string) {
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     if (!file) throw new BadRequestException('file is required');
     const session = await this.nakama.session(token);
@@ -37,6 +37,7 @@ export class UserService {
     await this.minio.minio.putObject('profiles', name, file.buffer);
     this.nakama.client.rpc(session, 'rpcUpdateProfile', {
       profile_url: this.minio.entryPoint + '/profiles/' + name,
+      text: text,
     });
   }
 }

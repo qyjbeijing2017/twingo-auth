@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Headers,
   Post,
@@ -59,7 +60,8 @@ export class UserController {
   profile(
     @Headers('Authorization') token: string,
     @UploadedFile() file: Express.Multer.File,
+    @Body('text') text: string,
   ) {
-    return this.userService.profile(token, file);
+    return this.userService.profile(token, file, text);
   }
 }
