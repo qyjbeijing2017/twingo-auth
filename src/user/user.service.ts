@@ -29,7 +29,6 @@ export class UserService {
   }
 
   async profile(token: string, file: Express.Multer.File, text: string) {
-    this.logger.log(`profile: ${token}, ${file}, ${text}`);
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     if (!file) throw new BadRequestException('file is required');
     const session = await this.nakama.session(token);
