@@ -14,8 +14,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadDto } from './dto/file-upload';
+import { ProfileDto } from './dto/file-upload';
 import { UserService } from './user.service';
+import { AvatarDto } from './dto/avatar.dto';
 
 const authDesc = `Please Leave empty in Swagger UI,Use lock icon on the top-right to authorize, authorize is Nakama session token, e.g. 'Bearer ' + session.token, but in swagger UI you don't need to add 'Bearer '`;
 
@@ -29,7 +30,7 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'avatar file',
-    type: FileUploadDto,
+    type: AvatarDto,
   })
   @ApiHeader({
     name: 'Authorization',
@@ -49,7 +50,7 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'profile file',
-    type: FileUploadDto,
+    type: ProfileDto,
   })
   @ApiHeader({
     name: 'Authorization',
