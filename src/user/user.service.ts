@@ -42,8 +42,8 @@ export class UserService {
       });
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(
-        `rpcUpdateProfile failed, ${JSON.stringify(e)}`,
+      throw new UnauthorizedException(
+        `rpcUpdateProfile failed, please check your token`,
       );
     }
   }
