@@ -28,20 +28,16 @@ export class UserService {
     });
   }
 
-  async profile(token: string, file: Express.Multer.File) {
+  async profile(token: string, file: Express.Multer.File, text: string) {
     if (!token.startsWith('Bearer ')) throw new UnauthorizedException();
     if (!file) throw new BadRequestException('file is required');
     const session = await this.nakama.session(token);
     const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
     await this.minio.minio.putObject('profiles', name, file.buffer);
-    try {
-      await this.nakama.client.rpc(session, 'rpcUpdateProfile', {
-        profile_url: this.minio.entryPoint + '/profiles/' + name,
-      });
-    } catch (e) {
-      this.logger.error(e);
-      throw new BadRequestException(`nakamaError: ${e}`);
-    }
+    this.nakama.client.rpc(session, 'rpcUpdateProfile', {
+      profile_url: this.minio.entryPoint + '/profiles/' + name,
+      text: text,
+    });
   }
 }
