@@ -35,8 +35,13 @@ export class UserService {
     const type = file.originalname.split('.').pop();
     const name = session.user_id + '.' + type;
     await this.minio.minio.putObject('profiles', name, file.buffer);
-    this.nakama.client.rpc(session, 'rpcUpdateProfile', {
-      profile_url: this.minio.entryPoint + '/profiles/' + name,
-    });
+    try {
+      await this.nakama.client.rpc(session, 'rpcUpdateProfile', {
+        profile_url: this.minio.entryPoint + '/profiles/' + name,
+      });
+    } catch (e) {
+      this.logger.error(e);
+      throw new BadRequestException(`nakamaError: ${e}`);
+    }
   }
 }
