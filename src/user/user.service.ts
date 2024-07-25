@@ -42,7 +42,9 @@ export class UserService {
       });
     } catch (e) {
       this.logger.error(e);
-      throw new BadRequestException(`rpcUpdateProfile failed, ${e}`);
+      throw new BadRequestException(
+        `rpcUpdateProfile failed, ${JSON.stringify(e)}`,
+      );
     }
   }
 }
