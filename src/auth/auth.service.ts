@@ -24,14 +24,6 @@ export class AuthService {
     let auth = await this.authRepository.findOne({ where: { phone } });
     const now = new Date();
 
-    const waitTime =
-      this.authExpiryTime - (now.getTime() - auth.updatedAt.getTime()) / 1000;
-    if (auth && waitTime > 0) {
-      throw new ForbiddenException(
-        `Code is already sent, please wait ${waitTime.toFixed(0)} seconds`,
-      );
-    }
-
     if (!auth) {
       auth = new Auth();
       auth.phone = phone;
@@ -40,7 +32,16 @@ export class AuthService {
       if (!auth.uuid.startsWith(phone)) {
         auth.uuid = phone + `-` + randomString(27);
       }
+
+      const waitTime =
+        this.authExpiryTime - (now.getTime() - auth.updatedAt.getTime()) / 1000;
+      if (auth && waitTime > 0) {
+        throw new ForbiddenException(
+          `Code is already sent, please wait ${waitTime.toFixed(0)} seconds`,
+        );
+      }
     }
+
     auth.code = Math.floor(Math.random() * 10000).toString();
     auth.updatedAt = new Date();
     this.codeGateway.codeSent(auth.phone, auth.code);
