@@ -5,6 +5,7 @@ import { MinIOService } from './minio.service';
 import { UserService } from './user.service';
 
 @Module({
+  imports: [],
   controllers: [UserController],
   providers: [UserService, NakamaService, MinIOService],
 })
