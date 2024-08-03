@@ -7,7 +7,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 @Module({
   imports: [
     MailerModule.forRoot({
-      transport: `stmps://${process.env.EMAIL}:${process.env.PASSWORD}@${process.env.HOST}:${process.env.PORT}`,
+      transport: `stmps://${process.env.EMAIL}:${process.env.EMAIL_PASSWORD}@${process.env.EMAIL_HOST}:${process.env.PORT}`,
       defaults: {
         from: `"Twingo Verify" <${process.env.EMAIL}>`,
       },

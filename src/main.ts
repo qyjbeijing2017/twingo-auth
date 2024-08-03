@@ -1,8 +1,13 @@
+import { ConfigModule } from '@nestjs/config';
+ConfigModule.forRoot({
+  envFilePath: [`.env.local`, `.env.${process.env.NODE_ENV}`, '.env'],
+  isGlobal: true,
+});
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { WinstonModule } from 'nest-winston';
-import { format, transports } from 'winston';
+import { format, loggers, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
 async function bootstrap() {
