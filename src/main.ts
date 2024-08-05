@@ -1,3 +1,8 @@
+import { ConfigModule } from '@nestjs/config';
+ConfigModule.forRoot({
+  envFilePath: [`.env.local`, `.env.${process.env.NODE_ENV}`, '.env'],
+  isGlobal: true,
+});
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';

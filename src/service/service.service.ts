@@ -1,9 +1,10 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 
 @Injectable()
 export class ServiceService {
+  logger = new Logger(ServiceService.name);
   constructor(private readonly mailerService: MailerService) {}
 
   async verifyEmail(to: string, username: string) {
@@ -12,7 +13,7 @@ export class ServiceService {
       await this.mailerService.sendMail({
         to,
         subject: process.env.EMAIL_SUBJECT.replace('{code}', code.toString()),
-        template: __dirname + '/templates/email',
+        template: 'email',
         context: {
           to,
           code,
@@ -20,6 +21,7 @@ export class ServiceService {
         },
       });
     } catch (error) {
+      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
     return { code };
