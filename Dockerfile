@@ -19,6 +19,6 @@ COPY --from=node-builder /code/package*.json ./
 COPY --from=node-builder /code/node_modules ./node_modules
 COPY --from=node-builder /code/dist ./dist
 COPY --from=node-builder /code/.env* ./
-ADD ./tmplates ./tmplates
+COPY --from=node-builder /code/tmplates ./tmplates
 
 CMD ["node", "dist/main.js"]
