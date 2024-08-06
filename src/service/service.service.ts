@@ -1,6 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { randomInt } from 'crypto';
+import { randomStringNumber } from 'src/utils/random';
 
 @Injectable()
 export class ServiceService {
@@ -8,7 +8,7 @@ export class ServiceService {
   constructor(private readonly mailerService: MailerService) {}
 
   async verifyEmail(to: string, username: string) {
-    const code = randomInt(0, parseInt(process.env.EMAIL_CODE_MAX));
+    const code = randomStringNumber(parseInt(process.env.EMAIL_CODE_MAX));
     try {
       await this.mailerService.sendMail({
         to,

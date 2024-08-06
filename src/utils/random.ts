@@ -7,3 +7,11 @@ export const randomString = (length: number) => {
   }
   return result;
 };
+
+export const randomStringNumber = (length: number) => {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += Math.floor(Math.random() * 10).toString();
+  }
+  return result;
+};
