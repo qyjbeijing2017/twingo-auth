@@ -7,9 +7,9 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
+  // cors: {
+  //   origin: '*',
+  // },
 })
 export class CodeGateway
   implements OnGatewayDisconnect<Socket>, OnGatewayConnection<Socket>
